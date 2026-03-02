@@ -21,6 +21,7 @@ app.geometry("900x500")
 x = 0
 y = 0
 z = 0
+w = x
 mensagem = ""
 
 ascii_art_path = "design/ascii-art.txt"
@@ -66,8 +67,9 @@ def atualizar_mensagem_live(valor=None):
     x = round(xscale.get())
     y = round(yscale.get())
     z = round(zscale.get())
+    w = round(wscale.get())
 
-    texto = f"{x}, {y}, {z}"
+    texto = f"{x}, {y}, {z}, {w}"
     label_message.configure(text=f"Mensagem: {texto}")
 
 
@@ -78,8 +80,9 @@ def enviar():
     x = round(xscale.get())
     y = round(yscale.get())
     z = round(zscale.get())
+    w = round(wscale.get())
 
-    mensagem = f"{x}, {y}, {z}\n"
+    mensagem = f"{x}, {y}, {z}, {w}\n"
     ser.write(mensagem.encode())
 
 
@@ -97,8 +100,8 @@ def setValues():
     x = round(xscale.get())
     y = round(yscale.get())
     z = round(zscale.get())
-
-    mensagem = f"{x}, {y}, {z}"
+    w = round(wscale.get())
+    mensagem = f"{x}, {y}, {z}, {w}"
     return mensagem
 
 
@@ -150,6 +153,7 @@ def criar_slider(label_text):
 xscale = criar_slider("X Axis")
 yscale = criar_slider("Y Axis")
 zscale = criar_slider("Z Axis")
+wscale = criar_slider("W Axis")
 
 sendButton = ctk.CTkButton(main_frame, text="Enviar", command=enviar)
 sendButton.pack(pady=5, fill="x")
