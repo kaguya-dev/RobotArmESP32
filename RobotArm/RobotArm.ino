@@ -1,15 +1,12 @@
 #include <Arduino.h>
-#include <BluetoothSerial.h>
 #include <ESP32Servo.h>
 
-BluetoothSerial serialBT;
 Servo baseServo;
 
 float xc, yc, zc;
 
 void setup() {
   Serial.begin(115200);
-  serialBT.begin("Chisa");
   delay(300);
 
   Serial.println("Controller Setted!");
@@ -20,13 +17,13 @@ void setup() {
   zc = 0;
 
   baseServo.setPeriodHertz(50);
-  baseServo.attach(13, 500, 2500);
+  baseServo.attach(13);
   baseServo.write(90);
 }
 
 void loop() {
-  if (serialBT.available()) {
-    String line = serialBT.readStringUntil('\n');
+  if (Serial.available()) {
+    String line = Serial.readStringUntil('\n');
     line.trim();
 
     float x, y, z;
@@ -51,14 +48,10 @@ void loop() {
 
       baseServo.write(servoAngle);
 
-      Serial.print("Theta (deg): ");
-      Serial.println(thetaDeg);
-      Serial.print("Servo angle: ");
-      Serial.println(servoAngle);
-      Serial.print("Cx = ");
-      Serial.println(xc);
-      Serial.print("Cy = ");
-      Serial.println(yc);
+      Serial.println("Theta:" + String(thetaDeg) +
+               " | Servo:" + String(servoAngle) +
+               " | Cx:" + String(xc) +
+               " | Cy:" + String(yc));
     } else {
       Serial.println("Invalid input. Use: x y z");
     }
