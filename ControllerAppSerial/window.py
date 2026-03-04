@@ -11,12 +11,12 @@ ser = None
 # ----- Appearance -----
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
-
+# img = ctk.PhotoImage(file="chisa.jpg")
 # ----- App -----
 app = ctk.CTk(fg_color="#28282b")
 app.title("CHISA")
 app.geometry("900x500")
-
+# app.iconphoto(False, img)
 # ----- Global Values -----
 x = 0
 y = 0
@@ -24,10 +24,8 @@ z = 0
 w = x
 mensagem = ""
 
-ascii_art_path = "design/ascii-art.txt"
-with open(ascii_art_path, "r") as file:
-    ascii_art = file.read()
 liveMode = False
+garraOp = False
 
 
 # ----- Functions -----
@@ -82,8 +80,22 @@ def enviar():
     z = round(zscale.get())
     w = round(wscale.get())
 
-    mensagem = f"{x}, {y}, {z}, {w}\n"
+    mensagem = f"{x}, {y}, {z}, {w}, {int(garraOp)}\n"
     ser.write(mensagem.encode())
+
+
+def toggleGarra():
+    global garraOp
+    garraOp = not garraOp
+
+    if garraOp:
+        clawButton.configure(
+            text="Garra Aberta", fg_color="green", hover_color="darkgreen"
+        )
+    else:
+        clawButton.configure(
+            text="Garra Fechada", fg_color="gray", hover_color="#525252"
+        )
 
 
 def toggleLive():
@@ -91,9 +103,9 @@ def toggleLive():
     liveMode = not liveMode
 
     if liveMode:
-        live_Button.configure(text="Live ON", fg_color="green")
+        live_Button.configure(text="Live ON", fg_color="green", hover_color="darkgreen")
     else:
-        live_Button.configure(text="Live OFF", fg_color="gray")
+        live_Button.configure(text="Live OFF", fg_color="gray", hover_color="#525252")
 
 
 def setValues():
@@ -101,7 +113,7 @@ def setValues():
     y = round(yscale.get())
     z = round(zscale.get())
     w = round(wscale.get())
-    mensagem = f"{x}, {y}, {z}, {w}"
+    mensagem = f"{x}, {y}, {z}, {w}, {int(garraOp)} \n"
     return mensagem
 
 
@@ -117,11 +129,11 @@ def ler_serial():
     if ser is not None and ser.inWaiting():
         linha = ser.readline().decode().strip()
     if liveMode:
-        app.after(50, atualizar_resposta, linha)
+        app.after(75, atualizar_resposta, linha)
 
 
-app.grid_columnconfigure(1, weight=2)
-app.grid_columnconfigure(2, weight=4)
+app.grid_columnconfigure(1, weight=1)
+app.grid_columnconfigure(2, weight=5)
 
 app.grid_rowconfigure(0, weight=2)
 # ----- Layout Frame -----
@@ -155,12 +167,27 @@ yscale = criar_slider("Y Axis")
 zscale = criar_slider("Z Axis")
 wscale = criar_slider("W Axis")
 
-sendButton = ctk.CTkButton(main_frame, text="Enviar", command=enviar)
-sendButton.pack(pady=5, fill="x")
+
+clawButton = ctk.CTkButton(
+    main_frame,
+    text="Garra Fechada",
+    command=toggleGarra,
+    fg_color="gray",
+    hover_color="#525252",
+)
+clawButton.pack(pady=5, fill="x")
+
 live_Button = ctk.CTkButton(
-    main_frame, text="Live OFF", command=toggleLive, fg_color="gray"
+    main_frame,
+    text="Live OFF",
+    command=toggleLive,
+    fg_color="gray",
+    hover_color="#525252",
 )
 live_Button.pack(pady=5, fill="x")
+
+sendButton = ctk.CTkButton(main_frame, text="Enviar", command=enviar)
+sendButton.pack(pady=5, fill="x")
 
 title_label = ctk.CTkLabel(
     ports_frame, text="CHISA V1.0", text_color="#adbce6", font=("DejaVu Sans Mono", 30)
